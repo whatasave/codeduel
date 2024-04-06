@@ -1,0 +1,87 @@
+version: '3.8'
+
+# env_file:
+#   - path: ./.env.backend
+#     required: true
+
+services:
+  # frontend:
+  #   # image: xedom/codeduel-fe
+  #   container_name: frontend
+  #   profiles: ['prod']
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   ports:
+  #     - 8080:80
+  #   environment:
+  #     BACKEND_URL: http://backend:5000
+  #   depends_on:
+  #     - backend
+
+  database:
+    image: mariadb
+    container_name: database
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: 1
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+
+  backend:
+    image: xedom/codeduel-be
+    container_name: backend
+    restart: always
+    ports:
+      - 5000:5000
+    environment:
+      BINARY_NAME: ${BINARY_NAME}
+      HOST: ${HOST}
+      PORT: ${PORT}
+      FRONTEND_URL: ${FRONTEND_URL}
+      FRONTEND_URL_AUTH_CALLBACK: ${FRONTEND_URL_AUTH_CALLBACK}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_HOST: ${MARIADB_HOST}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_PORT: ${MARIADB_PORT}
+      MARIADB_USER: ${MARIADB_USER}
+      AUTH_GITHUB_CLIENT_CALLBACK_URL: ${AUTH_GITHUB_CLIENT_CALLBACK_URL}
+      AUTH_GITHUB_CLIENT_ID: ${AUTH_GITHUB_CLIENT_ID}
+      AUTH_GITHUB_CLIENT_SECRET: ${AUTH_GITHUB_CLIENT_SECRET}
+    depends_on:
+      - database
+
+  lobby:
+    image: xedom/codeduel-lobby
+    container_name: lobby
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      HOST: localhost
+      PORT: 5010
+      BINARY_NAME: codeduel-lobby
+      BACKEND_URL: http://localhost:5000
+      BACKEND_API_KEY: xxxxxxxxxxxxxxxx
+      RUNNER_URL: http://localhost:5020
+      RUNNER_API_KEY: xxxxxxxxxxxxxxxx
+    depends_on:
+      - runner
+
+  runner:
+    image: xedom/codeduel-runner
+    container_name: runner
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      HOST: localhost
+      PORT: 5001
+      BINARY_NAME: codeduel-runner
+      FRONTEND_URL: '*'
+      DOCKER_IMAGE_PREFIX: cd-runner-
+      DOCKER_TIMEOUT: 5s
