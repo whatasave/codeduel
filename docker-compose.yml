@@ -1,25 +1,9 @@
 version: '3.8'
 
-# env_file:
-#   - path: ./.env.backend
-#     required: true
+env_file:
+  - path: ./.env
 
 services:
-  # frontend:
-  #   # image: xedom/codeduel-fe
-  #   container_name: frontend
-  #   profiles: ['prod']
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   ports:
-  #     - 8080:80
-  #   environment:
-  #     BACKEND_URL: http://backend:5000
-  #   depends_on:
-  #     - backend
-
   database:
     image: mariadb
     container_name: database
@@ -39,7 +23,6 @@ services:
     ports:
       - 5000:5000
     environment:
-      BINARY_NAME: ${BINARY_NAME}
       HOST: ${HOST}
       PORT: ${PORT}
       FRONTEND_URL: ${FRONTEND_URL}
