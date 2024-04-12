@@ -1,7 +1,7 @@
 version: '3.8'
 
-env_file:
-  - path: ./.env
+# env_file:
+#   - path: ./.env
 
 services:
   database:
@@ -23,18 +23,23 @@ services:
     ports:
       - 5000:5000
     environment:
-      HOST: ${HOST}
-      PORT: ${PORT}
-      FRONTEND_URL: ${FRONTEND_URL}
-      FRONTEND_URL_AUTH_CALLBACK: ${FRONTEND_URL_AUTH_CALLBACK}
+      HOST: ${HOST_BACKEND}
+      PORT: ${PORT_BACKEND}
+
       MARIADB_DATABASE: ${MARIADB_DATABASE}
       MARIADB_HOST: ${MARIADB_HOST}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_PORT: ${MARIADB_PORT}
       MARIADB_USER: ${MARIADB_USER}
+
       AUTH_GITHUB_CLIENT_CALLBACK_URL: ${AUTH_GITHUB_CLIENT_CALLBACK_URL}
       AUTH_GITHUB_CLIENT_ID: ${AUTH_GITHUB_CLIENT_ID}
       AUTH_GITHUB_CLIENT_SECRET: ${AUTH_GITHUB_CLIENT_SECRET}
+
+      FRONTEND_URL: ${FRONTEND_URL}
+      FRONTEND_URL_AUTH_CALLBACK: ${FRONTEND_URL_AUTH_CALLBACK}
+
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - database
 
@@ -43,15 +48,17 @@ services:
     container_name: lobby
     restart: always
     ports:
-      - 3000:3000
+      - 5010:5010
     environment:
-      HOST: localhost
-      PORT: 5010
+      HOST: ${HOST_LOBBY}
+      PORT: ${PORT_LOBBY}
       BINARY_NAME: codeduel-lobby
-      BACKEND_URL: http://localhost:5000
-      BACKEND_API_KEY: xxxxxxxxxxxxxxxx
-      RUNNER_URL: http://localhost:5020
-      RUNNER_API_KEY: xxxxxxxxxxxxxxxx
+
+      BACKEND_URL: ${BACKEND_URL}
+      BACKEND_API_KEY: ${BACKEND_API_KEY}
+
+      RUNNER_URL: ${RUNNER_URL}
+      RUNNER_API_KEY: ${RUNNER_API_KEY}
     depends_on:
       - runner
 
@@ -59,11 +66,13 @@ services:
     image: xedom/codeduel-runner
     container_name: runner
     restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - 8080:8080
+      - 5020:5020
     environment:
-      HOST: localhost
-      PORT: 5001
+      HOST_: ${HOST_RUNNER}
+      PORT: ${PORT_RUNNER}
       BINARY_NAME: codeduel-runner
       FRONTEND_URL: '*'
       DOCKER_IMAGE_PREFIX: cd-runner-
