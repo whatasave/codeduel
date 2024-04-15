@@ -8,8 +8,8 @@ services:
     image: mariadb
     container_name: database
     restart: always
-    ports:
-      - 3306:3306
+    # ports:
+    #   - 3306:3306
     environment:
       MARIADB_RANDOM_ROOT_PASSWORD: 1
       MARIADB_USER: ${MARIADB_USER}
