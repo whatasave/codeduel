@@ -19,8 +19,6 @@ services:
   backend:
     image: xedom/codeduel-be
     container_name: backend
-    profiles:
-      - full
     restart: always
     ports:
       - 5000:5000
