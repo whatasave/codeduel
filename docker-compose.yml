@@ -19,6 +19,8 @@ services:
   backend:
     image: xedom/codeduel-be
     container_name: backend
+    profiles:
+      - full
     restart: always
     ports:
       - 5000:5000
@@ -73,8 +75,8 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - 5020:5020
+    # ports:
+    #   - 5020:5020
     environment:
       HOST_: ${HOST_RUNNER}
       PORT: ${PORT_RUNNER}
