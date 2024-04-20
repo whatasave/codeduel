@@ -4,6 +4,21 @@ version: '3.8'
 #   - path: ./.env
 
 services:
+  frontend:
+    image: xedom/codeduel-fe
+    container_name: frontend
+    restart: always
+    profiles:
+      - fe
+    ports:
+      - 5173:80
+    environment:
+      PUBLIC_LOBBY_HOST_PORT: ${PUBLIC_LOBBY_HOST_PORT}
+      PUBLIC_BACKEND_URL: ${PUBLIC_BACKEND_URL}
+
+    depends_on:
+      - backend
+
   database:
     image: mariadb
     container_name: database
