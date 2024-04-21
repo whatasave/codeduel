@@ -19,6 +19,7 @@ services:
       - "traefik.http.services.codeduel.loadbalancer.server.port=80"
       - "traefik.http.routers.codeduel.tls=true"
       - "traefik.http.routers.codeduel.tls.certresolver=myresolver"
+      - "traefik.http.routers.codeduel-be.middlewares=redirect@file"
 
   database:
     image: mariadb
@@ -68,6 +69,7 @@ services:
       - "traefik.http.routers.codeduel-be.entrypoints=web"
       - "traefik.http.routers.codeduel-be.rule=Host(`api.codeduel.it`)"
       - "traefik.http.services.codeduel-be.loadbalancer.server.port=80"
+      # - "traefik.http.routers.codeduel-be.middlewares=no-redirect@file"
 
   lobby:
     image: xedom/codeduel-lobby
