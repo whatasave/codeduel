@@ -8,23 +8,24 @@ services:
     image: xedom/codeduel-fe
     container_name: frontend
     restart: always
-    profiles:
-      - fe
-    ports:
-      - 5173:80
-    environment:
-      PUBLIC_LOBBY_HOST_PORT: ${PUBLIC_LOBBY_HOST_PORT}
-      PUBLIC_BACKEND_URL: ${PUBLIC_BACKEND_URL}
-
-    depends_on:
-      - backend
+    # profiles: ["fe"]
+    # ports: ["5173:80"]
+    # depends_on: ["backend"]
+    networks: ["traefik_proxy"]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.codeduel.entrypoints=web,websecure"
+      - "traefik.http.routers.codeduel.rule=Host(`codeduel.it`)"
+      - "traefik.http.services.codeduel.loadbalancer.server.port=80"
+      - "traefik.http.routers.codeduel.tls=true"
+      - "traefik.http.routers.codeduel.tls.certresolver=myresolver"
 
   database:
     image: mariadb
     container_name: database
     restart: always
-    # ports:
-    #   - 3306:3306
+    profiles: ["db"]
+    # ports: ["3306:3306"]
     environment:
       MARIADB_RANDOM_ROOT_PASSWORD: 1
       MARIADB_USER: ${MARIADB_USER}
@@ -35,8 +36,7 @@ services:
     image: xedom/codeduel-be
     container_name: backend
     restart: always
-    ports:
-      - 5000:5000
+    #ports: ["5000:5000"]
     environment:
       HOST: ${HOST_BACKEND}
       PORT: ${PORT_BACKEND}
@@ -60,8 +60,14 @@ services:
       FRONTEND_URL_AUTH_CALLBACK: ${FRONTEND_URL_AUTH_CALLBACK}
 
       JWT_SECRET: ${JWT_SECRET}
-    depends_on:
-      - database
+    # depends_on: ["database"]
+    expose: [80]
+    networks: ["traefik_proxy"]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.codeduel-be.entrypoints=web"
+      - "traefik.http.routers.codeduel-be.rule=Host(`api.codeduel.it`)"
+      - "traefik.http.services.codeduel-be.loadbalancer.server.port=80"
 
   lobby:
     image: xedom/codeduel-lobby
@@ -79,8 +85,7 @@ services:
 
       RUNNER_URL: ${RUNNER_URL}
       RUNNER_API_KEY: ${RUNNER_API_KEY}
-    depends_on:
-      - runner
+    # depends_on: ["runner"]
 
   runner:
     image: xedom/codeduel-runner
@@ -88,8 +93,7 @@ services:
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    # ports:
-    #   - 5020:5020
+    # ports: [ "5020:5020" ]
     environment:
       HOST_: ${HOST_RUNNER}
       PORT: ${PORT_RUNNER}
@@ -97,3 +101,8 @@ services:
       FRONTEND_URL: '*'
       DOCKER_IMAGE_PREFIX: cd-runner-
       DOCKER_TIMEOUT: 5s
+
+networks:
+  traefik_proxy:
+    driver: overlay
+    name: traefik_proxy
