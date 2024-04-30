@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'
 
 # env_file:
 #   - path: ./.env
@@ -8,9 +8,9 @@ services:
     image: xedom/codeduel-fe
     container_name: frontend
     restart: always
-    # profiles: ["fe"]
-    # ports: ["5173:80"]
-    # depends_on: ["backend"]
+    profiles: ['all', 'frontend']
+    ports: ['5173:80']
+    # depends_on: ['backend']
     networks: ['traefik_proxy']
     labels:
       - 'traefik.enable=true'
@@ -18,13 +18,14 @@ services:
       - 'traefik.http.routers.codeduel.rule=Host(`codeduel.it`)'
       - 'traefik.http.services.codeduel.loadbalancer.server.port=80'
       - 'traefik.http.routers.codeduel.tls=true'
+      - 'traefik.http.routers.codeduel-be.tls.certresolver=myresolver'
 
   database:
     image: mariadb
     container_name: database
     restart: always
-    profiles: ['db']
-    # ports: ["3306:3306"]
+    profiles: ['all', 'database']
+    # ports: ['3306:3306']
     environment:
       MARIADB_RANDOM_ROOT_PASSWORD: 1
       MARIADB_USER: ${MARIADB_USER}
@@ -35,7 +36,8 @@ services:
     image: xedom/codeduel-be
     container_name: backend
     restart: always
-    # ports: ["5000:80"]
+    profiles: ['all', 'api', 'backend']
+    ports: ['5000:80']
     # volumes:
     #  - /home/xe/docker/codeduel/ssl:/ssl
     environment:
@@ -64,7 +66,7 @@ services:
 
       JWT_SECRET: ${JWT_SECRET}
       SERVICE_TOKEN: ${SERVICE_TOKEN}
-    # depends_on: ["database"]
+    # depends_on: ['database']
     networks: ['traefik_proxy']
     labels:
       - 'traefik.enable=true'
@@ -73,13 +75,14 @@ services:
       - 'traefik.http.services.codeduel-be.loadbalancer.server.port=80'
       - 'traefik.http.routers.codeduel-be.tls=true'
       - 'traefik.http.routers.codeduel-be.tls.certresolver=myresolver'
-        #- "traefik.http.routers.codeduel-be.middlewares=redirect@file"
-        #- "traefik.http.routers.codeduel-be.middlewares=no-redirect@file"
+        #- 'traefik.http.routers.codeduel-be.middlewares=redirect@file'
+        #- 'traefik.http.routers.codeduel-be.middlewares=no-redirect@file'
 
   lobby:
     image: xedom/codeduel-lobby
     container_name: lobby
     restart: always
+    profiles: ['all', 'api', 'lobby']
     ports: ['5010:80']
     environment:
       BACKEND_URL: ${BACKEND_URL}
@@ -87,7 +90,7 @@ services:
 
       RUNNER_URL: ${RUNNER_URL}
       RUNNER_API_KEY: ${RUNNER_API_KEY}
-    # depends_on: ["runner"]
+    # depends_on: ['runner']
     networks: ['codeduel', 'traefik_proxy']
     labels:
       - 'traefik.enable=true'
@@ -101,9 +104,10 @@ services:
     image: xedom/codeduel-runner
     container_name: runner
     restart: always
+    profiles: ['all', 'api', 'runner']
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    # ports: [ "5020:5020" ]
+    # ports: [ '5020:5020' ]
     networks: ['codeduel']
     environment:
       FRONTEND_URL: '*'
