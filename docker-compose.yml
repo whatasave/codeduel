@@ -37,6 +37,9 @@ services:
     restart: always
     ports:
       - 5000:5000
+    volumes:
+      - ./ssl/server.crt:/usr/local/server.crt
+      - ./ssl/server.key:/usr/local/server.key
     environment:
       HOST: ${HOST_BACKEND}
       PORT: ${PORT_BACKEND}
