@@ -14,4 +14,7 @@ docker compose --profile full up -d
 
 ```
 $ git pull --recurse-submodules
+
+// update submodules
+$ git submodule foreach git pull origin main
 ```
