@@ -28,12 +28,12 @@ services:
     # ports: ['3306:3306']
     environment:
       MARIADB_RANDOM_ROOT_PASSWORD: 1
-      MARIADB_USER: ${MARIADB_USER}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASS}
+      MARIADB_DATABASE: ${DB_NAME}
 
   backend:
-    image: xedom/codeduel-be
+    image: xedom/codeduel-backend
     container_name: backend
     restart: always
     profiles: ['all', 'api', 'backend']
@@ -41,15 +41,18 @@ services:
     # volumes:
     #  - /home/xe/docker/codeduel/ssl:/ssl
     environment:
-      MARIADB_DATABASE: ${MARIADB_DATABASE}
-      MARIADB_HOST: ${MARIADB_HOST}
-      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
-      MARIADB_PORT: ${MARIADB_PORT}
-      MARIADB_USER: ${MARIADB_USER}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PASS: ${DB_PASS}
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
 
-      AUTH_GITHUB_CLIENT_CALLBACK_URL: ${AUTH_GITHUB_CLIENT_CALLBACK_URL}
       AUTH_GITHUB_CLIENT_ID: ${AUTH_GITHUB_CLIENT_ID}
       AUTH_GITHUB_CLIENT_SECRET: ${AUTH_GITHUB_CLIENT_SECRET}
+      AUTH_GITHUB_CLIENT_CALLBACK_URL: ${AUTH_GITHUB_CLIENT_CALLBACK_URL}
+
+      FRONTEND_URL: ${FRONTEND_URL}
+      LOGIN_REDIRECT: ${LOGIN_REDIRECT}
 
       COOKIE_DOMAIN: ${COOKIE_DOMAIN}
       COOKIE_PATH: ${COOKIE_PATH}
@@ -61,10 +64,15 @@ services:
       CORS_HEADERS: ${CORS_HEADERS}
       CORS_CREDENTIALS: ${CORS_CREDENTIALS}
 
-      FRONTEND_URL: ${FRONTEND_URL}
-      FRONTEND_URL_AUTH_CALLBACK: ${FRONTEND_URL_AUTH_CALLBACK}
+      ACCESS_TOKEN_COOKIE_NAME: ${ACCESS_TOKEN_COOKIE_NAME}
+      ACCESS_TOKEN_EXPIRES: ${ACCESS_TOKEN_EXPIRES}
+      REFRESH_TOKEN_COOKIE_NAME: ${REFRESH_TOKEN_COOKIE_NAME}
+      REFRESH_TOKEN_EXPIRES: ${REFRESH_TOKEN_EXPIRES}
 
       JWT_SECRET: ${JWT_SECRET}
+      JWT_ISSUER: ${JWT_ISSUER}
+      
+      SERVICE_HEADER_NAME: ${SERVICE_HEADER_NAME}
       SERVICE_TOKEN: ${SERVICE_TOKEN}
     # depends_on: ['database']
     networks: ['traefik_proxy']
@@ -114,6 +122,6 @@ services:
 
 networks:
   traefik_proxy:
-    name: traefik_proxy
-    external: true
+    # name: traefik_proxy
+    # external: true
   codeduel:
