@@ -11,6 +11,8 @@ services:
     profiles: ['all', 'frontend']
     ports: ['5173:80']
     # depends_on: ['backend']
+    environment:
+      - TZ=Europe/Rome
     networks: ['traefik_proxy']
     labels:
       - 'traefik.enable=true'
