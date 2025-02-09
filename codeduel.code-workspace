@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "codeduel-fe"
+		},
+		{
+			"path": "codeduel-backend"
+		},
+		{
+			"path": "codeduel-lobby"
+		},
+		{
+			"path": "codeduel-runner"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}

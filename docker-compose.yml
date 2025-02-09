@@ -7,7 +7,7 @@ services:
   frontend:
     image: xedom/codeduel-fe
     container_name: frontend
-    restart: always
+    restart: unless-stopped
     profiles: ['all', 'frontend']
     ports: ['5173:80']
     # depends_on: ['backend']
@@ -25,7 +25,7 @@ services:
   database:
     image: mariadb
     container_name: database
-    restart: always
+    restart: unless-stopped
     profiles: ['all', 'database']
     # ports: ['3306:3306']
     environment:
@@ -37,7 +37,7 @@ services:
   backend:
     image: xedom/codeduel-backend
     container_name: backend
-    restart: always
+    restart: unless-stopped
     profiles: ['all', 'api', 'backend']
     ports: ['5000:80']
     # volumes:
@@ -91,7 +91,7 @@ services:
   lobby:
     image: xedom/codeduel-lobby
     container_name: lobby
-    restart: always
+    restart: unless-stopped
     profiles: ['all', 'api', 'lobby']
     ports: ['5010:80']
     environment:
@@ -113,7 +113,7 @@ services:
   runner:
     image: xedom/codeduel-runner
     container_name: runner
-    restart: always
+    restart: unless-stopped
     profiles: ['all', 'api', 'runner']
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
