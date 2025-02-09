@@ -13,7 +13,7 @@ services:
     # depends_on: ['backend']
     environment:
       - TZ=Europe/Rome
-    networks: ['traefik_proxy']
+    networks: ['traefik_proxy', 'codeduel']
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.codeduel.entrypoints=web,websecure'
@@ -28,6 +28,7 @@ services:
     restart: unless-stopped
     profiles: ['all', 'database']
     # ports: ['3306:3306']
+    networks: ['codeduel']
     environment:
       MARIADB_RANDOM_ROOT_PASSWORD: 1
       MARIADB_USER: ${DB_USER}
@@ -77,7 +78,7 @@ services:
       SERVICE_HEADER_NAME: ${SERVICE_HEADER_NAME}
       SERVICE_TOKEN: ${SERVICE_TOKEN}
     # depends_on: ['database']
-    networks: ['traefik_proxy']
+    networks: ['traefik_proxy', 'codeduel']
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.codeduel-be.entrypoints=web,websecure'
